@@ -1,0 +1,38 @@
+#! /bin/sh
+source ./repoinfo
+# 必要な変数をチェックする
+   if [ -n "$develop_branch" ]; then
+      echo "develop branch is $develop_branch"
+   else
+      echo "not exist develop_branch"
+      exit 1
+   fi
+
+# #closeを加えてログ生成
+git log | grep -e "#" > logtemp.txt
+read close_comment < logtemp.txt
+rm logtemp.txt
+git commit --amend -m "$close_comment #close"
+
+# ビルドに失敗したら更新しない
+if [ $? -ne 0 ]; then
+   exit 1
+fi
+
+# ブランチ名を保存
+read branch_name < ./.git/HEAD
+echo $branch_name | sed -e "s/ref: refs\/heads\///">.branchname.txt
+read branch_name < .branchname.txt
+rm .branchname.txt
+echo "merge $branch_name -> $develop_branch"
+
+# ビルドに成功したからマージコミットを作成する
+git checkout -f "$develop_branch"
+git pull origin "$develop_branch"
+
+# マージ用のブランチに移動してマージする
+git checkout -b "$develop_branch-merge/$branch_name"
+git merge "$branch_name"
+
+
+

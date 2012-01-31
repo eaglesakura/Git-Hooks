@@ -1,0 +1,11 @@
+#! /bin/sh
+
+# 必要な変数をチェックする
+if [ -n "$1" ]; then
+   echo "start ticket #$1"
+else
+   echo "please input ticket number!!"
+   exit 1
+fi
+git checkout -b id/$1/master
+git add ./
