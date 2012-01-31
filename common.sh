@@ -58,3 +58,18 @@ extractParents()
     echo "${parents##parent }"
 }
 
+
+
+
+# add functions
+
+# ticket number only
+extractTicketNumber()
+{
+    echo "$(getGitBranchName)" \
+    | awk 'BEGIN{ FS="[/]"}
+           $1 == "id" { printf "%s", $2 }
+           $2 == "id" { printf "%s", $3 }'
+}
+
+
