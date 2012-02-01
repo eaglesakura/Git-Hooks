@@ -16,6 +16,10 @@ read close_comment < logtemp.txt
 rm logtemp.txt
 git commit --amend -m "$close_comment"
 
+if [ -f ./build ]; then
+   ./build
+fi
+
 # ビルドに失敗したら更新しない
 if [ $? -ne 0 ]; then
    exit 1
@@ -34,7 +38,10 @@ git pull origin "$develop_branch"
 
 # マージ用のブランチに移動してマージする
 git checkout -b "$branch_name-merge/$develop_branch"
+if [ $? -ne 0 ]; then
+   exit 1
+fi
 git merge "$branch_name"
-
+git branch
 
 
