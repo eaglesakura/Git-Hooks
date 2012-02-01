@@ -1,0 +1,20 @@
+#! /bin/sh
+if [ -f ./repoinfo ]; then
+  source ./repoinfo
+else
+  echo "repoinfo not exist"
+  exit 1
+fi
+
+# 現在のブランチ名を保存
+read branch_name < ./.git/HEAD
+echo $branch_name | sed -e "s/ref: refs\/heads\///">.branchname.txt
+read branch_name < .branchname.txt
+rm .branchname.txt
+
+
+# 必要な変数をチェックする
+git checkout -f "$develop_branch"
+git merge "$branch_name"
+git branch -d "$branch_name"
+git push origin $develop_branch
