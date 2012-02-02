@@ -8,6 +8,13 @@ source ./repoinfo
       exit 1
    fi
 
+source esgithookcommon
+
+# ユーザーに許可をさせる
+echo "end this topic?"
+assert_user_enter
+
+
 # #closeを加えてログ生成
 git log | grep -e "#" > logtemp.txt
 read close_comment < logtemp.txt
