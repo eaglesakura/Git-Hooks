@@ -5,6 +5,9 @@ source ./repoinfo
 # ブランチ名を取得
 read_branchname
 
+# コミットし忘れ防止
+git commit -a -m "close this topic"
+
 # マージする？
 echo "merge $branch_name -> $develop_branch ?"
 assert_user_enter

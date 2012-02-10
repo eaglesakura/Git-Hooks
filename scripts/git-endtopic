@@ -1,5 +1,6 @@
 #! /bin/sh
 source ./repoinfo
+
 # 必要な変数をチェックする
    if [ -n "$develop_branch" ]; then
       echo "develop branch is $develop_branch"
@@ -14,6 +15,8 @@ source esgithookcommon
 echo "end this topic?"
 assert_user_enter
 
+# コミットし忘れ防止
+git commit -a -m "close this topic"
 
 # #closeを加えてログ生成
 git log | grep -e "#" > logtemp.txt
@@ -49,6 +52,7 @@ if [ $? -ne 0 ]; then
    exit 1
 fi
 git merge "$branch_name"
+git status
 git branch
 
 
