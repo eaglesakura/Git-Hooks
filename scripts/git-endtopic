@@ -1,13 +1,13 @@
 #! /bin/sh
-source ./repoinfo
+# source ./repoinfo
 
 # 必要な変数をチェックする
-   if [ -n "$develop_branch" ]; then
-      echo "develop branch is $develop_branch"
-   else
-      echo "not exist develop_branch"
-      exit 1
-   fi
+#   if [ -n "$develop_branch" ]; then
+#      echo "develop branch is $develop_branch"
+#   else
+#      echo "not exist develop_branch"
+#      exit 1
+#   fi
 
 source esgithookcommon
 
@@ -27,32 +27,20 @@ rm logtemp.txt
 git commit --amend -m "$close_comment"
 
 if [ -f ./build ]; then
-   ./build
-fi
-
-# ビルドに失敗したら更新しない
-if [ $? -ne 0 ]; then
-   exit 1
+  ./build
+  # ビルドに失敗したら更新しない
+  if [ $? -ne 0 ]; then
+     exit 1
+  fi
 fi
 
 # ブランチ名を保存
 read branch_name < ./.git/HEAD
-echo $branch_name | sed -e "s/ref: refs\/heads\///">.branchname.txt
+echo $branch_name | sed -e "s/ref: refs\/heads\/feature\///">.branchname.txt
 read branch_name < .branchname.txt
 rm .branchname.txt
 echo "merge $branch_name -> $develop_branch"
 
-# ビルドに成功したからマージコミットを作成する
-git checkout -f "$develop_branch"
-git pull origin "$develop_branch"
-
-# マージ用のブランチに移動してマージする
-git checkout -b "$branch_name-merge/$develop_branch"
-if [ $? -ne 0 ]; then
-   exit 1
-fi
-git merge "$branch_name"
+# ビルドに成功したからfeatureを閉じる
+git flow feature finish $branch_name
 git status
-git branch
-
-
